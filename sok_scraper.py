@@ -1,13 +1,16 @@
 from lxml import etree
 from tqdm import tqdm
 import pandas as pd
+import html
+import re
+from html.entities import name2codepoint
 
 # --- PARAMETERS ---
 TARGET_VENUES = {
     "mobisys", "mobicom", "sensys", "chi", "ubicomp", "imwut", "sigcomm", "nsdi"
 }
 START_YEAR = 2020 # 2020 - 2025
-TYPE = {"inproceedings", "article"} # only pull papers
+TYPE = ("inproceedings", "article") # only pull papers
 
 # --- HELPER FUNCTIONS ---
 
@@ -24,10 +27,12 @@ def extract_tag(entry, tag):
 # checks if entry is from valid year
 def valid_year(entry):
     year = extract_tag(entry, "year")
+    if year is None:
+        return None
     try:
-        if int(year.strip()) >= START_YEAR:
-            return year.strip()
-    except (TypeError, ValueError):
+        if int(year) >= START_YEAR:
+            return year
+    except ValueError:
         return None
 
 # checks if entry is from valid venue
@@ -41,7 +46,7 @@ def valid_venue(entry):
         if v:
             v_lower = v.lower()
             for venue in TARGET_VENUES:
-                if venue in v_lower:
+                if re.search(rf'\b{re.escape(venue)}\b', v_lower):
                     return v
     return None
 
@@ -77,40 +82,70 @@ def extract_entry(entry):
     }
 
 # --- PARSER ---
-def parse_dblp(xml_file):
+def parse_dblp(xml_file, skip=0, max=None):
     results = []
     total = 0
+    skipped = 0
 
-    context = etree.iterparse(xml_file, events=('end',), tag=TYPE)
-
-    print("Parsing DBLP... (this may take several minutes)")
-    for _, element in tqdm(context, desc="Entries processed", unit="entry"):
-        total += 1
-        
-        try:
-            record = extract_entry(element)
-        except Exception as e:
-            print(f"Skipping entry due to error: {e}")
-            continue
+    parser = etree.XMLParser(load_dtd=False, no_network=True, recover=True, resolve_entities=False)
     
-        if record:
-            results.append(record)
+    with open(xml_file, 'rb') as file:  # open file as binary
+        try:
+            context = etree.iterparse(
+                file,
+                events=('end',),
+                tag=TYPE,
+                load_dtd=False,
+                no_network=True,
+                resolve_entities=False,
+                recover=True,
+                huge_tree=True
+            )
+        except Exception as e:
+            print(f"Could not initialize parser: {e}")
+            return []
+        
+        print("Parsing DBLP... (this may take several minutes)")
+        for _, element in tqdm(context, desc="Entries processed", unit="entry"):
+            total += 1
 
-        # Free memory
-        element.clear()
-        while element.getprevious() is not None:
-            del element.getparent()[0]
+            if total < skip:
+                continue
+
+            if max and total >= max:
+                break
+        
+            try:
+                record = extract_entry(element)
+                if record:
+                    results.append(record)
+            except Exception as e:
+                skipped += 1
+                print(f"Skipping entry {total} due to error: {e}")
+                try:
+                    print(etree.tostring(element, pretty_print=True, encoding="unicode"))
+                except Exception as sub_e:
+                    print(f"Could not print element {total}: {sub_e}")
+            finally:
+                # Free memory
+                try:
+                    element.clear()
+                    while element.getprevious() is not None:
+                        del element.getparent()[0]
+                except Exception as cleanup_e:
+                    print(f"Cleanup error at entry {total}: {cleanup_e}")
+                    continue
 
     print(f"\nTotal entries parsed: {total}")
     print(f"Total matching papers: {len(results)}")
+    print(f"Total skipped entries: {skipped}")
     return results
 
 # --- MAIN ---
 if __name__ == "__main__":
-    xml_file = "test.xml" 
-    papers = parse_dblp(xml_file)
+    papers = parse_dblp("dblp.xml")
 
     df = pd.DataFrame(papers)
-    output_file = "test_filtered.csv"
+    output_file = "dblp_07_25_2025_filtered.csv"
     df.to_csv(output_file, index=False)
     print("Saved to " + output_file)
