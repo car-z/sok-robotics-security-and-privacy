@@ -1,2 +1,4 @@
 .DS_Store
 dblp.xml
+dblp_cleaned.xml
+*.csv
