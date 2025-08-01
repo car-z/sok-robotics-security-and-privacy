@@ -1,3 +1,6 @@
+# ACM DOES NOT PUBLISH THEIR ABSTRACTS AS META DATA ON CROSSREF API
+# THEREFORE THIS CODE (WHILE CORRECT) GENERATES NOTHING
+
 import pandas as pd
 import requests
 import time
@@ -44,7 +47,7 @@ def extract_doi(raw_doi):
 df = pd.read_csv(INPUT_CSV)
 total_rows = len(df)
 
-for start in range(0, len(df), CHUNK_SIZE):
+for start in range(0, total_rows, CHUNK_SIZE):
     end = min(start + CHUNK_SIZE, total_rows)
     batch_df = df.iloc[start:end].copy()
     abstracts = []

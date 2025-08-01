@@ -24,7 +24,15 @@ def remove_from_title(title, input):
     print("Removed: " + str(removed))
     return output
 
+def remove_from_ee(ee, input):
+    ee = ee.lower()
+    print("Original length: " + str(len(input)))
+    output = input[~input['ee'].str.lower().str.contains(ee)]
+    removed = len(input) - len(output)
+    print("Removed: " + str(removed))
+    return output
+
 
 # OPERATIONS
 df = pd.read_csv('filtered_by_category.csv')
-count_occurrence('matched categories','ROBOT',df)
+
