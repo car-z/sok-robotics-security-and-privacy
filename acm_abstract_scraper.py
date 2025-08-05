@@ -1,3 +1,6 @@
+# ACM HTML SCRAPER
+# DOESN'T WORK BECAUSE ACM BLOCKS HTML SCRAPING
+
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -83,7 +86,7 @@ for start in range(0, total_rows, CHUNK_SIZE):
 
     print(f"\n🔄 Processing rows {start} to {end - 1}")
 
-    for idx, row in tqdm(df.iterrows(), total=len(batch_df), desc=f"Batch {(start // CHUNK_SIZE) + 1}"):
+    for idx, row in tqdm(batch_df.iterrows(), total=len(batch_df), desc=f"Batch {(start // CHUNK_SIZE) + 1}"):
         url = row.get("ee","")
         abstract = None
 
