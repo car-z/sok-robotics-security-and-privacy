@@ -10,7 +10,7 @@ from html.entities import name2codepoint
 #     "mobisys", "mobicom", "sensys", "chi", "ubicomp", "imwut", "sigcomm", "nsdi"
 # }
 TARGET_VENUES = {
-     "SP", "USENIX Security Symposium", "CCS", "NDSS", "SOUPS @ USENIX Security Symposium", "EuroS&P", "ICCPS", "IROS", "ICRA"
+     "SP", "USENIX Security Symposium", "CCS", "NDSS", "SOUPS", "EuroS&P", "ICCPS", "IROS", "ICRA"
  }
 
 START_YEAR = 2020 # 2020 - 2025
@@ -49,8 +49,12 @@ def valid_venue(entry):
         v = extract_tag(entry, "booktitle")
         if v:
             for venue in TARGET_VENUES:
-                if re.search(rf'\b{re.escape(venue)}\b', v):
-                    return venue
+                if venue == "SOUPS":
+                    if "soups" in v.lower():
+                        return "SOUPS"
+                else:
+                    if re.search(rf'\b{re.escape(venue)}\b', v):
+                        return venue
     return None
 
 # checks if entry is valid, and returns all necessary info if valid
@@ -149,6 +153,6 @@ if __name__ == "__main__":
     papers = parse_dblp("dblp/dblp.xml")
 
     df = pd.DataFrame(papers)
-    output_file = "security conference scrape.csv"
+    output_file = "initial security conference scrape.csv"
     df.to_csv(output_file, index=False)
     print("Saved to " + output_file)

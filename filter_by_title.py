@@ -125,10 +125,10 @@ def save_keywords(input):
     return filtered
 
 # -- MAIN -- 
-df = pd.read_csv('filtered.csv')
+df = pd.read_csv('scraped_data/SP/filtered.csv')
 print("Original length:",len(df))
 
 output_df = save_keywords(df)
 print("Length after keyword filtering:",len(output_df))
 
-# output_df.to_csv("filtered_by_category.csv",index=False)
+output_df.to_csv("scraped_data/SP/filtered_by_title.csv",index=False)

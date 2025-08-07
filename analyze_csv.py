@@ -34,5 +34,10 @@ def remove_from_ee(ee, input):
 
 
 # OPERATIONS
-df = pd.read_csv('filtered_by_category.csv')
+df = pd.read_csv('scraped_data/SP/filtered.csv')
+output = remove_from_title("Poster abstract", df)
+# output = remove_from_title("(poster)", output)
+output = remove_from_title("poster ", output)
+print(len(output))
+output.to_csv("scraped_data/SP/filtered.csv",index=False)
 
