@@ -6,9 +6,13 @@ import re
 from html.entities import name2codepoint
 
 # --- PARAMETERS ---
+# TARGET_VENUES = {
+#     "mobisys", "mobicom", "sensys", "chi", "ubicomp", "imwut", "sigcomm", "nsdi"
+# }
 TARGET_VENUES = {
-    "mobisys", "mobicom", "sensys", "chi", "ubicomp", "imwut", "sigcomm", "nsdi"
-}
+     "SP", "USENIX Security Symposium", "CCS", "NDSS", "SOUPS @ USENIX Security Symposium", "EuroS&P", "ICCPS", "IROS", "ICRA"
+ }
+
 START_YEAR = 2020 # 2020 - 2025
 TYPE = ("inproceedings", "article") # only pull papers
 
@@ -39,15 +43,14 @@ def valid_year(entry):
 def valid_venue(entry):
     if is_journal(entry):
         key = entry.get("key")
-        if "imwut" in key:
-            return "IMWUT"
+        if "popets" in key:
+            return "PETS"
     else:
         v = extract_tag(entry, "booktitle")
         if v:
-            v_lower = v.lower()
             for venue in TARGET_VENUES:
-                if re.search(rf'\b{re.escape(venue)}\b', v_lower):
-                    return v
+                if re.search(rf'\b{re.escape(venue)}\b', v):
+                    return venue
     return None
 
 # checks if entry is valid, and returns all necessary info if valid
@@ -143,9 +146,9 @@ def parse_dblp(xml_file, skip=0, max=None):
 
 # --- MAIN ---
 if __name__ == "__main__":
-    papers = parse_dblp("dblp.xml")
+    papers = parse_dblp("dblp/dblp.xml")
 
     df = pd.DataFrame(papers)
-    output_file = "dblp_07_25_2025_filtered.csv"
+    output_file = "security conference scrape.csv"
     df.to_csv(output_file, index=False)
     print("Saved to " + output_file)

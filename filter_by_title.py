@@ -5,7 +5,7 @@ import re
 
 CATEGORIES = {
     "ROBOT": {
-        "robot", "robotics", "mobile robot", "robot mobility", "autonomous vehicle",
+        "robot", "robotics", "mobile robot", "robot mobility", "autonomous vehicle", "automated vehicle",
         "delivery robot", "vacuum", "drone", "telepresence robot", "humanoid robot", "rover",
         "inspection robot", "service robot", "home robot", "domestic robot", "assistive robot",
         "companion robot", "food service robot", "surveillance robot", "robot navigation"
@@ -28,11 +28,11 @@ CATEGORIES = {
     }, 
     "PRIVACY_AND_SECURITY": {
         "privacy", "security", "sensor privacy", "data privacy", "user privacy", "privacy-preserving",
-        "privacy preserving", "privacy enhancing",
+        "privacy preserving", "privacy enhancing", "safety", "resilience", "attack",
         "privacy-aware", "privacy control", "data leakage", "privacy risk", "sensor leakage",
         "user privacy", "data collection", "context-aware privacy", "surveillance", "anonymization",
         "obfuscation", "masking", "cloaking", "sensor spoofing", "jamming", "sensor blocking",
-        "invisibility cloak", "retroreflective material", "adversarial", "privacy paradox", "trusted execution"
+        "invisibility cloak", "retroreflective material", "adversarial", "privacy paradox", "trusted execution", "authentication"
     },
     "SENSOR_USE_CASES": {
         "activity recognition", "behavior inference", "presence detection", "people tracking",
