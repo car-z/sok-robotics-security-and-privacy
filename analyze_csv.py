@@ -12,7 +12,7 @@ def count_occurrence(field, keyword, input):
     keyword = keyword.lower()
     key = input[input[field].str.lower().str.contains(keyword)]
     count = str(len(key))
-    key.to_csv('only_robot_papers.csv', index=False)
+    # key.to_csv('only_robot_papers.csv', index=False)
     print("# " + keyword + " papers: " + count)
     return
 
@@ -32,12 +32,26 @@ def remove_from_ee(ee, input):
     print("Removed: " + str(removed))
     return output
 
+def only_keep(field, keyword, input):
+    keyword = keyword.lower()
+    output = pd.DataFrame(columns=input.columns)
+    for index, row in df.iterrows():
+        value = str(row[field]).lower()
+        if keyword in value:
+            output = pd.concat([output, df.iloc[[index]]],ignore_index=True)
+    return output
+
 
 # OPERATIONS
-df = pd.read_csv('scraped_data/SP/filtered.csv')
-output = remove_from_title("Poster abstract", df)
-# output = remove_from_title("(poster)", output)
-output = remove_from_title("poster ", output)
+df = pd.read_csv('scraped_data/SP/revised_filtered_by_title.csv')
+count_occurrence('matched categories','PRIVACY_AND_SECURITY',df)
+output = only_keep('matched categories','PRIVACY_AND_SECURITY',df)
 print(len(output))
-output.to_csv("scraped_data/SP/filtered.csv",index=False)
 
+only_robots = pd.read_csv('scraped_data/SP/only_robot.csv')
+print(len(only_robots))
+
+intersection_df = only_robots[only_robots['title'].isin(output['title'])].copy()
+print(len(intersection_df))
+
+intersection_df.to_csv("scraped_data/SP/roboticsSP.csv",index=False)
