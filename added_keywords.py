@@ -1,5 +1,3 @@
-# used to write temporary scripts for data analysis lol
-
 # ---- looking for what new keywords I added -------------------------------
 second_set_of_keywords = {
     

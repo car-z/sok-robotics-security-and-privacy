@@ -44,14 +44,14 @@ def only_keep(field, keyword, input):
 
 # OPERATIONS
 df = pd.read_csv('scraped_data/SP/revised_filtered_by_title.csv')
-count_occurrence('matched categories','PRIVACY_AND_SECURITY',df)
-output = only_keep('matched categories','PRIVACY_AND_SECURITY',df)
+count_occurrence('matched categories','RISKY_KEYWORDS',df)
+output = only_keep('matched categories','RISKY_KEYWORDS',df)
 print(len(output))
 
-only_robots = pd.read_csv('scraped_data/SP/only_robot.csv')
-print(len(only_robots))
+only_privacy = pd.read_csv('scraped_data/SP/only_privacy.csv')
+print(len(only_privacy))
 
-intersection_df = only_robots[only_robots['title'].isin(output['title'])].copy()
+intersection_df = only_privacy[only_privacy['title'].isin(output['title'])].copy()
 print(len(intersection_df))
 
-intersection_df.to_csv("scraped_data/SP/roboticsSP.csv",index=False)
+intersection_df.to_csv("scraped_data/SP/abbrevSP.csv",index=False)
