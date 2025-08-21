@@ -357,3 +357,7 @@ sarah_search = {
 different = sarah_search - my_search
 print(different)
 print(len(different))
+
+different_1 = my_search - sarah_search
+print(len(different_1))
+print(different_1)
